@@ -19,7 +19,7 @@
 
 using std::vector;
 
-namspace remake_planner{
+namespace remake_planner{
 
 class MakePlan {
 private:

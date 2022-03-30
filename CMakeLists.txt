@@ -25,7 +25,7 @@ find_package(catkin REQUIRED COMPONENTS
 # catkin_package(CATKIN_DEPENDS message_runtime)
 catkin_package(
  INCLUDE_DIRS include
- LIBRARIES kinodynamic_search plan_manage
+ LIBRARIES kinodynamic_search #plan_manage
  CATKIN_DEPENDS plan_env #plan_manage #path_searching
 #  DEPENDS system_lib
 )

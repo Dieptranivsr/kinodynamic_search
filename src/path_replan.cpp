@@ -1,11 +1,11 @@
 #include <ros/ros.h>
 
-#include <path_searching/kinodynamic_astar.h>
+#include <kinodynamic_search/kinodynamic_search.h>
 #include <plan_env/edt_environment.h>
 
 #include <Eigen/Eigen>
 
-#include <kinodynamic_path/path_replan.h>
+#include <kinodynamic_search/path_replan.h>
 
 namespace remake_planner {
 

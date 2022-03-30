@@ -3,12 +3,12 @@
 
 #include <ros/ros.h>
 
-#include <path_searching/astar.h>
-#include <path_searching/kinodynamic_astar.h>
-#include <path_env/plan_container.hpp>
+//#include <path_searching/astar.h>
+#include <kinodynamic_search/kinodynamic_search.h>
+#include <kinodynamic_search/plan_container.hpp>
 
 #include <plan_env/edt_environment.h>
-#include <kinodynamic_path/plan_container.h>
+#include <kinodynamic_search/plan_container.hpp>
 
 namespace remake_planner{
     // Remake Planner Manager
@@ -20,7 +20,6 @@ namespace remake_planner{
         ~RemakePlannerManager();
 
         void initPlanModules(ros::NodeHandle& nh);
-
 
         PlanParameters local_data;
         LocalTrajData local_data;

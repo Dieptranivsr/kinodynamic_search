@@ -1,9 +1,10 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
 
-#include <kinodynamic_path/path_replan.h>
+#include <kinodynamic_search/path_replan.h>
 
-#include <plan_manage/backward.hpp>
+#include <kinodynamic_search/backward.hpp>
+
 namespace backward {
     backward::SignalHandling sh;
 }
@@ -22,3 +23,6 @@ int main(int argc, char** argv){
 
     return 0;
 }
+
+
+// MakePlan - main_node.cpp -> path_replan.cpp --> search_manager.cpp ----> kinodynamic_search.cpp

@@ -9,9 +9,11 @@
 #include <string>
 #include <unordered_map>
 
-#include <plan_env/edt_environment.h>
+#include "plan_env/edt_environment.h"
 #include <boost/functional/hash.hpp>
 #include <queue>
+
+using namespace fast_planner;
 
 namespace remake_planner {
 // #define REACH_HORIZON 1
@@ -172,6 +174,8 @@ public:
   std::vector<PathNodePtr> getVisitedNodes();
 
   typedef shared_ptr<KinodynamicSearch> Ptr;
+
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 }  // namespace remake_planner

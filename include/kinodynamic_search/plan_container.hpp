@@ -151,7 +151,7 @@ public:
   vector<Eigen::Vector3d> global_waypoints_;
 
   // initial trajectory segment
-  NonUniformBspline initial_local_segment_;
+  //NonUniformBspline initial_local_segment_;
   vector<Eigen::Vector3d> local_start_end_derivative_;
 
   // kinodynamic path
