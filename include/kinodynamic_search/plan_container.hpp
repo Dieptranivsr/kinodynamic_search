@@ -133,6 +133,7 @@ public:
 struct PlanParameters {
   /* planning algorithm parameters */
   double max_vel_, max_acc_, max_jerk_;  // physical limits
+  double local_traj_len_;                // local replanning trajectory length
   double ctrl_pt_dist;                   // distance between adjacient B-spline
                                          // control points
   double clearance_;
@@ -143,16 +144,22 @@ struct PlanParameters {
   double time_adjust_ = 0.0;
 };
 
+struct LocalTrajData {
+  /* info of generated traj */
+
+  int traj_id_;
+  double duration_;
+  ros::Time start_time_;
+  Eigen::Vector3d start_pos_;
+  //NonUniformBspline position_traj_, velocity_traj_, acceleration_traj_, yaw_traj_, yawdot_traj_, yawdotdot_traj_;
+};
+
 class MidPlanData {
 public:
   MidPlanData(/* args */) {}
   ~MidPlanData() {}
 
   vector<Eigen::Vector3d> global_waypoints_;
-
-  // initial trajectory segment
-  //NonUniformBspline initial_local_segment_;
-  vector<Eigen::Vector3d> local_start_end_derivative_;
 
   // kinodynamic path
   vector<Eigen::Vector3d> kino_path_;

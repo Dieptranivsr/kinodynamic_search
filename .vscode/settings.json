@@ -1,5 +1,10 @@
 {
     "files.associations": {
-        "vector": "cpp"
-    }
+        "vector": "cpp",
+        "core": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "algorithm": "cpp"
+    },
+    "cmake.configureOnOpen": false
 }

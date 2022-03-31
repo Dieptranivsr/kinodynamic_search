@@ -7,7 +7,7 @@
 
 #include <kinodynamic_search/path_replan.h>
 
-namespace remake_planner {
+namespace remake_planner{
 
 void MakePlan::init(ros::NodeHandle& nh){
   current_wp  = 0;
@@ -17,11 +17,11 @@ void MakePlan::init(ros::NodeHandle& nh){
 
   /* MakePlan parameter */
   nh.param("makePlan/flyight_type", target_type, -1);
-  nh.param("makePlan/thresh_replan", replan_thresh_, -1.0);
-  nh.param("makePlan/thresh_no_replan", no_replan_thresh_, -1.0);
+  nh.param("makePlan/thresh_replan", replan_thresh, -1.0);
+  nh.param("makePlan/thresh_no_replan", no_replan_thresh, -1.0);
 
   nh.param("makePlan/waypoint_num", waypoint_num, -1);
-  for (int i = 0; i < waypoint_num, i++){
+  for (int i = 0; i < waypoint_num; i++){
     nh.param("makePlan/waypoint" + to_string(i) + "_x", waypoints[i][0], -1.0);
     nh.param("makePlan/waypoint" + to_string(i) + "_y", waypoints[i][1], -1.0);
     nh.param("makePlan/waypoint" + to_string(i) + "_z", waypoints[i][2], -1.0);
@@ -36,20 +36,20 @@ void MakePlan::init(ros::NodeHandle& nh){
   exec_timer = nh.createTimer(ros::Duration(0.01), &MakePlan::execCallback, this);
   //safety_timer = nh.createTimer(ros::Duration(0.01), &MakePlan::checkCollisionCallback, this);
 
-  waypoint_sub = nh.subscriber("/waypoint_generator/waypoints", 1, MakePlan::waypointsCallback, this);
-  odom_sub = nh.subscriber("/odom_world", 1, MakePlan::odomCallback, this);
+  waypoint_sub = nh.subscribe("/waypoint_generator/waypoints", 1, &MakePlan::waypointsCallback, this);
+  odom_sub = nh.subscribe("/odom_world", 1, &MakePlan::odomCallback, this);
 
   replan_pub  = nh.advertise<std_msgs::Empty>("/planning/replan", 10);
 }
 
 void MakePlan::waypointsCallback(const nav_msgs::PathConstPtr& msg){
-  if (msg->pose[0].pose.position.z < -0.1) return;
+  if (msg->poses[0].pose.position.z < -0.1) return;
 
   cout << "Triggered by dieptuantran!" << endl;
   //trigger = true;
 
   if (target_type == TARGET_TYPE::MANUAL){
-    end_pt << msg->pose[0].pose.position.x, msg->pose[0].pose.position.y, 1.0;
+    end_pt << msg->poses[0].pose.position.x, msg->poses[0].pose.position.y, 1.0;
   }
   else if (target_type == TARGET_TYPE::MANUAL){
     end_pt(0) = waypoints[current_wp][0];
@@ -95,7 +95,7 @@ void MakePlan::changePLANExecState(PLAN_EXEC_STATE new_state, string pos_call) {
 void MakePlan::printPLANExecState() {
   string state_str[5] = { "INIT", "WAIT_TARGET", "GEN_NEW_TRAJ", "REPLAN_TRAJ", "EXEC_TRAJ" };
 
-  cout << "[PLAN]: state: " + state_str[int(exec_state_)] << endl;
+  cout << "[PLAN]: state: " + state_str[int(exec_state)] << endl;
 }
 
 void MakePlan::execCallback(const ros::TimerEvent& e) {
@@ -134,7 +134,7 @@ void MakePlan::execCallback(const ros::TimerEvent& e) {
       start_vel = odom_vel;
       start_acc.setZero();
 
-      Eigen::Vector3d rot_x = odom_orient_.toRotationMatrix().block(0, 0, 3, 1);
+      Eigen::Vector3d rot_x = odom_orient.toRotationMatrix().block(0, 0, 3, 1);
       start_yaw(0)         = atan2(rot_x(1), rot_x(0));
       start_yaw(1) = start_yaw(2) = 0.0;
 
@@ -151,17 +151,19 @@ void MakePlan::execCallback(const ros::TimerEvent& e) {
 
     case EXEC_TRAJ: {
       // <full version: have local_traj>
-      if ((end_pt - pos).norm() < no_replan_thresh_) {
+      /* don't have {pos}
+      if ((end_pt - pos).norm() < no_replan_thresh) {
         // cout << "near end" << endl;
         return;
 
-      } else if ((start_pt - pos).norm() < replan_thresh_) {
+      } else if ((start_pt - pos).norm() < replan_thresh) {
         // cout << "near start" << endl;
         return;
 
       } else {
-        changeFSMExecState(REPLAN_TRAJ, "FSM");
+        changePLANExecState(REPLAN_TRAJ, "FSM");
       }
+      */
       break;
     }
 
@@ -170,9 +172,9 @@ void MakePlan::execCallback(const ros::TimerEvent& e) {
       start_vel = odom_vel;
       start_acc.setZero();
 
-      Eigen::Vector3d rot_x = odom_orient_.toRotationMatrix().block(0, 0, 3, 1);
-      start_yaw_(0)         = atan2(rot_x(1), rot_x(0));
-      start_yaw_(1) = start_yaw_(2) = 0.0;
+      Eigen::Vector3d rot_x = odom_orient.toRotationMatrix().block(0, 0, 3, 1);
+      start_yaw(0)         = atan2(rot_x(1), rot_x(0));
+      start_yaw(1) = start_yaw(2) = 0.0;
 
       std_msgs::Empty replan_msg;
       replan_pub.publish(replan_msg);
@@ -190,14 +192,14 @@ void MakePlan::execCallback(const ros::TimerEvent& e) {
 
 bool MakePlan::callKinodynamicReplan() {
   bool plan_success =
-      planner_manager_->kinodynamicReplan(start_pt_, start_vel_, start_acc_, end_pt_, end_vel_);
+      search_manager->kinodynamicReplan(start_pt, start_vel, start_acc, end_pt, end_vel);
 
   if (plan_success) {
 
-    planner_manager_->planYaw(start_yaw_);
+    //search_manager->planYaw(start_yaw);
 
     /* visulization */
-    auto plan_data = &planner_manager_->plan_data_;
+    auto plan_data = &search_manager->plan_data;
     visual->drawGeometricPath(plan_data->kino_path_, 0.075, Eigen::Vector4d(1, 1, 0, 0.4));
 
     return true;

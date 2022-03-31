@@ -13,6 +13,7 @@
 
 #include <path_searching/kinodynamic_astar.h>
 #include <plan_env/edt_environment.h>
+#include <kinodynamic_search/search_manager.h>
 #include <traj_utils/planning_visualization.h>
 
 #include <Eigen/Eigen>
@@ -33,6 +34,7 @@ private:
 
     /* parameter */
     int target_type;        // 1 manual select, 2 hard code
+    double no_replan_thresh, replan_thresh;
     double waypoints[50][3];
     int waypoint_num;
 

@@ -5,9 +5,9 @@
 
 //#include <path_searching/astar.h>
 #include <kinodynamic_search/kinodynamic_search.h>
-#include <kinodynamic_search/plan_container.hpp>
 
 #include <plan_env/edt_environment.h>
+
 #include <kinodynamic_search/plan_container.hpp>
 
 namespace remake_planner{
@@ -19,19 +19,21 @@ namespace remake_planner{
         RemakePlannerManager(/* args */);
         ~RemakePlannerManager();
 
+        bool kinodynamicReplan(Eigen::Vector3d start_pt, Eigen::Vector3d start_vel, Eigen::Vector3d start_acc,
+                         Eigen::Vector3d end_pt, Eigen::Vector3d end_vel);
         void initPlanModules(ros::NodeHandle& nh);
+        void setGlobalWaypoints(vector<Eigen::Vector3d>& waypoints);
 
-        PlanParameters local_data;
+        PlanParameters pp;
         LocalTrajData local_data;
-        LocalTrajData global_data;
-        LocalTrajData plan_data;
-        LocalTrajData edt_environment;
+        //LocalTrajData global_data;
+        MidPlanData plan_data;
+        EDTEnvironment::Ptr edt_environment;
 
     private:
         /* data */
         SDFMap::Ptr sdf_map;
-        unique_ptr<KinodynamicAstar> kino_path_finder;
-        
+        unique_ptr<KinodynamicSearch> kino_path_finder;
 
     public:
         typedef unique_ptr<RemakePlannerManager> Ptr;

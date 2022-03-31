@@ -48,7 +48,7 @@ add_executable(kinodynamic_search
 
 target_link_libraries(kinodynamic_search 
   ${catkin_LIBRARIES}
-  plan_manage
+  #plan_manage
   )
 
 
